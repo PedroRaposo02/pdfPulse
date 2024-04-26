@@ -6,4 +6,3 @@ project(PDFPulse)
 
 # Include the subdirectories
 add_subdirectory(src)
-add_subdirectory(extLibs/ZipLib)

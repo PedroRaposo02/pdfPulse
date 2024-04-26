@@ -2,7 +2,10 @@
 add_executable(PdfPulse main.cpp)
 
 # Include directories for external libraries
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../extLibs/RapidXml)
+add_subdirectory(extLibs)
 
 # Link against any libraries if needed
-# target_link_libraries(MyExecutable SomeOtherLibrary)
+# target_link_libraries(PdfPulse SomeOtherLibrary)
+
+# Link against the ZipLib library
+target_link_libraries(PdfPulse ZipLib)

@@ -1,35 +1,22 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <ctime>
-#include <chrono>
+#include "./extLibs/ZipLib/source/ZipLib/ZipFile.h"
 #include "./extLibs/RapidXml/rapidxml.hpp"
 #include "./extLibs/RapidXml/rapidxml_utils.hpp"
-#include "./extLibs/ZipLib/source/ZipLib/ZipFile.h"
 
 using namespace std;
 
-struct Person {
-    string name;
-    int age;
-};
-
-vector<Person> parseXML(const string& filePath) {
-    auto start = chrono::high_resolution_clock::now();
-
-    // Create empty vector to store parsed data
-    vector<Person> persons;
+void parseXML(const string& filePath) {
 
     // Load XML file
     rapidxml::file<> xmlFile(filePath.c_str());
-    rapidxml::xml_document<> doc;
+    rapidxml::xml_document<char> doc;
     doc.parse<0>(xmlFile.data());
 
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-    cout << "Execution time: " << duration << " ms" << endl;
+    // print something
+    cout << "Name of my first node is: " << doc.first_node()->name() << "\n";
 
-    return persons;
 }
 
 bool isFileExists(const string& filePath) {
