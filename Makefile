@@ -1,29 +1,23 @@
-CXX       := g++
-CXXFLAGS  := -std=c++11 -O3
-INCLUDE   := -Isrc/extLibs/RapidXml -Isrc/extLibs/ZipLib
-BUILD     := ./build
-APP_DIR   := $(BUILD)/apps
+EXECUTABLE_NAME = PdfPulse.exe
 
-TARGET    := src
-SRC       := src/main.cpp
+DATA_DIR ?= data
 
-ZIP_LIB_BUILD_DIR := build/ZipLib
+DOCX_FILE ?= ${DATA_DIR}/teste_1.docx
 
-all: build $(APP_DIR)/$(TARGET)
+.PHONY: all clean run
 
-$(APP_DIR)/$(TARGET): $(SRC)
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -o $@ $^
+all: build
+	@cd build && cmake .. && cmake --build .
 
 build:
-	@mkdir -p $(APP_DIR)
+	@mkdir -p build
+
+run:
+	@if [ -f "./build/src/Debug/${EXECUTABLE_NAME}" ]; then \
+		./build/src/Debug/${EXECUTABLE_NAME} "$(DOCX_FILE)"; \
+	else \
+		make all && ./build/src/Debug/${EXECUTABLE_NAME} "$(DOCX_FILE)"; \
+	fi
 
 clean:
-	-@rm -rvf $(APP_DIR)/
-
-zip_lib:
-	@mkdir -p $(ZIP_LIB_BUILD_DIR)
-	cd $(ZIP_LIB_BUILD_DIR) && cmake .
-	cd $(ZIP_LIB_BUILD_DIR) && make
-
-.PHONY: all clean zip_lib
+	@rm -rf build

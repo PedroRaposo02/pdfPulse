@@ -1,11 +1,23 @@
-# Add the executable target
-add_executable(PdfPulse main.cpp)
+add_subdirectory(extlibs)
 
-# Include directories for external libraries
-add_subdirectory(extLibs)
+set(sources
+    main.cpp
+    zip_extractor.cpp
+    zip_extractor.hpp
+    xml_parser.cpp
+    xml_parser.hpp
+)
 
-# Link against any libraries if needed
-# target_link_libraries(PdfPulse SomeOtherLibrary)
+set(CMAKE_CXX_STANDARD 11)
+add_executable(PdfPulse ${sources})
 
-# Link against the ZipLib library
-target_link_libraries(PdfPulse ZipLib)
+target_include_directories(PdfPulse
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/extlibs/rapidxml-1.13
+)
+
+target_link_libraries(PdfPulse
+    PRIVATE
+        ZipLib
+        hpdf
+)
