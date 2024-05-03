@@ -26,4 +26,4 @@ vendor/
 .DS_Store
 Thumbs.db
 
-extlibs/dev
+extlibs/dev/**

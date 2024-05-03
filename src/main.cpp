@@ -2,15 +2,15 @@
 #include <string>
 #include <vector>
 
-/* #include "xml_parser.hpp"
+#include "xml_parser.hpp"
 #include "zip_extractor.hpp"
-#include "pdf_builder.hpp" */
+#include "pdf_builder.hpp"
 
 using namespace std;
 
 
 int main(int argc, char* argv[]) {
-    /* string filepath;
+    string filepath;
     if (argc > 1) {
         filepath = argv[1];
     } else {
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
         cout << "File: " << entry->GetName() << endl;
     }
 
-    buildPdf("data/output.pdf", {"Hello", "World"}); */
+    buildPdf("data/output.pdf", {"Hello", "World"});
 
  
     return 0;

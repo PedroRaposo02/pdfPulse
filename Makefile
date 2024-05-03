@@ -1,4 +1,4 @@
-EXECUTABLE_NAME = PdfPulse.exe
+EXECUTABLE_NAME = pdf_pulse_exe.exe
 
 DATA_DIR ?= data
 

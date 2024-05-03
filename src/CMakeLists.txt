@@ -2,13 +2,14 @@ cmake_minimum_required(VERSION 3.22)
 
 include(FetchContent)
 
+set(CMAKE_CXX_STANDARD 14)
+
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 set(SKIP_INSTALL_EXPORT TRUE)
 set(FETCHCONTENT_QUIET FALSE)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_CXX_STANDARD 14)
 
 if (UNIX AND NOT APPLE)
   find_package(PkgConfig REQUIRED)
@@ -31,8 +32,8 @@ FetchContent_Declare(zlib
 )
 
 FetchContent_Declare(ziplib
-  GIT_REPOSITORY https://github.com/DreamyCecil/ZipLib.git
-  GIT_TAG        689a2570a15bf17a98f8729936abb5097193e6a6
+  GIT_REPOSITORY https://github.com/PedroRaposo02/ZipLib.git
+  GIT_TAG        c42438556e173cf2c5029aeb65bbdab1e8b67e67
   GIT_SHALLOW    TRUE
   GIT_PROGRESS   TRUE
   OVERRIDE_FIND_PACKAGE
@@ -80,12 +81,15 @@ endif()
 if(NOT ziplib_POPULATED)
   FetchContent_Populate(ziplib)
 
-  set(ZIPLIB_INCLUDE_DIR ${ziplib_SOURCE_DIR}/Source/ZipLib)
   set(ZIPLIB_LIBRARY ziplib)
+
+  set(ZIPLIB_INCLUDE_DIRS
+    ${ziplib_INCLUDE_DIR}/src
+  )
 
   cmake_policy(SET CMP0077 NEW)
 
-  add_subdirectory(${ziplib_SOURCE_DIR} ${ziplib_BINARY_DIR})
+  add_subdirectory(${ziplib_SOURCE_DIR} ${ziplib_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
 if (WIN32 OR APPLE)
@@ -102,16 +106,16 @@ if(NOT libharu_POPULATED)
 endif()
 
 include_directories(
-  ${libharu_SOURCE_DIR}/include 
   ${libharu_BINARY_DIR}/include
-  ${ZIPLIB_INCLUDE_DIR}
-  ${PROJECT_BINARY_DIR}/extlibs/rapidxml
-  ${PROJECT_BINARY_DIR}/include
+  ${ziplib_BINARY_DIR}
 )
+
+
+message(STATUS "project binary dir: ${PROJECT_BINARY_DIR}")
 
 link_directories(
   ${libharu_BINARY_DIR}/src
-  ${ZIPLIB_BINARY_DIR}/Source/ZipLib
+  ${ziplib_BINARY_DIR}
 )
 
 set(sources_library
@@ -120,30 +124,30 @@ set(sources_library
     pdf_builder.cpp
 )
 
-set(headers_library
-    zip_extractor.hpp
-    xml_parser.hpp
-    pdf_builder.hpp
-)
-
 set(sources_executable
     main.cpp
 )
 
-set(headers_executable
+add_library(pdf_pulse STATIC ${sources_library})
+
+target_link_libraries(pdf_pulse
+    PUBLIC
+        ${HPDF_LIBRARY}
+        ${ZIPLIB_LIBRARY}
 )
 
-# add_library(pdf_pulse STATIC ${sources_library} ${headers_library})
-
-# target_link_libraries(pdf_pulse
-#     PUBLIC
-#         ${HPDF_LIBRARY}
-#         ${ZIPLIB_LIBRARY}
-# )
+target_include_directories(pdf_pulse
+    PUBLIC
+        ${libharu_BINARY_DIR}/include
+        ${ziplib_BINARY_DIR}
+        extlibs/rapidxml
+        include
+        
+)
 
 add_executable(pdf_pulse_exe ${sources_executable} ${headers_executable})
 
-# target_link_libraries(pdf_pulse_exe
-#     PRIVATE
-#         pdf_pulse
-# )
+target_link_libraries(pdf_pulse_exe
+    PRIVATE
+        pdf_pulse
+)
