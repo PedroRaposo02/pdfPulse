@@ -3,9 +3,6 @@
 #include <string>
 #include <iostream>
 
-#include "rapidxml.hpp"
-#include "rapidxml_utils.hpp"
-
 using namespace std;
 
 void parseXml(const string& filePath) {

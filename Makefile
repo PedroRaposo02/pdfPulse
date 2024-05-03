@@ -1,8 +1,4 @@
-EXECUTABLE_NAME = pdf_pulse_exe.exe
-
-DATA_DIR ?= data
-
-DOCX_FILE ?= ${DATA_DIR}/teste_1.docx
+EXECUTABLE_NAME = pdf_pulse_main.exe
 
 .PHONY: all clean run
 

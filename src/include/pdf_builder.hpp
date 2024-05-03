@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "hpdf.h"
+
 int buildPdf(const std::string& outputPdfPath, const std::vector<std::string>& text);
 
 #endif // PDF_BUILDER_HPP

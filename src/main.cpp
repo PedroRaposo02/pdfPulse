@@ -3,36 +3,45 @@
 #include <vector>
 
 #include "xml_parser.hpp"
-#include "zip_extractor.hpp"
+// #include "zip_extractor.hpp"
 #include "pdf_builder.hpp"
 
 using namespace std;
 
-
-int main(int argc, char* argv[]) {
-    string filepath;
-    if (argc > 1) {
+int main(int argc, char *argv[])
+{
+    /* string filepath;
+    if (argc > 1)
+    {
         filepath = argv[1];
-    } else {
-        filepath = "C:\\Users\\prapo\\Documents\\MerdasUni\\2023 - 2nd Semester\\PESTI\\pdfPulse\\data\\teste_1\\word/document.xml";
     }
+    else
+    {
+        filepath = "C:\\Users\\prapo\\Documents\\MerdasUni\\2023-2ndSemester\\PESTI\\pdfPulse\\data\\teste_1\\word/document.xml";
+    }
+
+    cout << "Filepath: " << filepath << endl; // Print the filepath being used
 
     ZipArchive::Ptr zipFile = readZipFile(filepath);
 
-    if (!zipFile) {
+    if (!zipFile)
+    {
         cerr << "Error reading zip file" << endl;
         return 1;
     }
 
-    // print zip archive files
+    cout << "Zip archive contents:" << endl; // Print a message before printing the zip archive files
 
-    for (int i = 0; i < zipFile->GetEntriesCount(); i++) {
-        ZipArchiveEntry::Ptr entry = zipFile->GetEntry(i); 
+    // Print zip archive files
+    for (int i = 0; i < zipFile->GetEntriesCount(); i++)
+    {
+        ZipArchiveEntry::Ptr entry = zipFile->GetEntry(i);
         cout << "File: " << entry->GetName() << endl;
-    }
+    } */
+
+    // parseXml("C:\\Users\\prapo\\Documents\\MerdasUni\\2023-2ndSemester\\PESTI\\pdfPulse\\data\\teste_1\\word/document.xml");
 
     buildPdf("data/output.pdf", {"Hello", "World"});
 
- 
     return 0;
 }

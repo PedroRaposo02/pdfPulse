@@ -6,6 +6,7 @@
 #include <string>
 
 #include "ZipArchive.h"
+#include "ZipFile.h"
 
 ZipArchive::Ptr readZipFile(const std::string& zipPath);
 

@@ -33,7 +33,7 @@ FetchContent_Declare(zlib
 
 FetchContent_Declare(ziplib
   GIT_REPOSITORY https://github.com/PedroRaposo02/ZipLib.git
-  GIT_TAG        c42438556e173cf2c5029aeb65bbdab1e8b67e67
+  GIT_TAG        master
   GIT_SHALLOW    TRUE
   GIT_PROGRESS   TRUE
   OVERRIDE_FIND_PACKAGE
@@ -84,7 +84,8 @@ if(NOT ziplib_POPULATED)
   set(ZIPLIB_LIBRARY ziplib)
 
   set(ZIPLIB_INCLUDE_DIRS
-    ${ziplib_INCLUDE_DIR}/src
+    ${ziplib_SOURCE_DIR}
+    ${ziplib_BINARY_DIR}
   )
 
   cmake_policy(SET CMP0077 NEW)
@@ -102,21 +103,12 @@ if(NOT libharu_POPULATED)
   set(LIBHPDF_STATIC ON)
   set(BUILD_SHARED_LIBS OFF)
   set(HPDF_LIBRARY hpdf)
+  set(LIBHARU_INCLUDE_DIRS
+    ${libharu_BINARY_DIR}/include
+    ${libharu_SOURCE_DIR}/include
+  )
   add_subdirectory(${libharu_SOURCE_DIR} ${libharu_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
-
-include_directories(
-  ${libharu_BINARY_DIR}/include
-  ${ziplib_BINARY_DIR}
-)
-
-
-message(STATUS "project binary dir: ${PROJECT_BINARY_DIR}")
-
-link_directories(
-  ${libharu_BINARY_DIR}/src
-  ${ziplib_BINARY_DIR}
-)
 
 set(sources_library
     zip_extractor.cpp
@@ -138,16 +130,23 @@ target_link_libraries(pdf_pulse
 
 target_include_directories(pdf_pulse
     PUBLIC
-        ${libharu_BINARY_DIR}/include
-        ${ziplib_BINARY_DIR}
+        ${LIBHARU_INCLUDE_DIRS}
+        ${ZIPLIB_INCLUDE_DIRS}
         extlibs/rapidxml
-        include
-        
+        include 
 )
 
-add_executable(pdf_pulse_exe ${sources_executable} ${headers_executable})
+add_executable(pdf_pulse_main ${sources_executable})
 
-target_link_libraries(pdf_pulse_exe
-    PRIVATE
+target_link_libraries(pdf_pulse_main
+    PUBLIC
         pdf_pulse
+)
+
+target_include_directories(pdf_pulse_main
+    PUBLIC
+        ${LIBHARU_INCLUDE_DIRS}
+        ${ZIPLIB_INCLUDE_DIRS}
+        extlibs/rapidxml
+        include
 )
