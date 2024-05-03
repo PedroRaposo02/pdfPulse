@@ -1,4 +1,5 @@
-EXECUTABLE_NAME = pdf_pulse_main.exe
+
+EXECUTABLE_NAME = pdf_pulse_main
 
 .PHONY: all clean run
 
@@ -9,11 +10,16 @@ build:
 	@mkdir -p build
 
 run:
-	@if [ -f "./build/src/Debug/${EXECUTABLE_NAME}" ]; then \
+	@if [ -f "./build/src/Debug/${EXECUTABLE_NAME}.exe" ]; then \
 		./build/src/Debug/${EXECUTABLE_NAME} "$(DOCX_FILE)"; \
 	else \
 		make all && ./build/src/Debug/${EXECUTABLE_NAME} "$(DOCX_FILE)"; \
 	fi
+
+build_exe:
+	@echo "Executable: ${EXECUTABLE_NAME}"
+	@cd build && cmake --build . --target ${EXECUTABLE_NAME}
+
 
 clean:
 	@rm -rf build out 

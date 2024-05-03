@@ -117,8 +117,10 @@ set(sources_library
 )
 
 set(sources_executable
-    main.cpp
+    test/main.cpp
 )
+
+file(GLOB SRC_EXECUTABLE ${PROJECT_SOURCE_DIR}/test/*.cpp)
 
 add_library(pdf_pulse STATIC ${sources_library})
 
@@ -136,7 +138,7 @@ target_include_directories(pdf_pulse
         include 
 )
 
-add_executable(pdf_pulse_main ${sources_executable})
+add_executable(pdf_pulse_main ${sources_executable} ${SRC_EXECUTABLE})
 
 target_link_libraries(pdf_pulse_main
     PUBLIC
