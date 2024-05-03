@@ -3,8 +3,8 @@
 #include <iostream>
 #include <string>
 
-#include "extlibs/ZipLib/Source/ZipLib/ZipFile.h"
-#include "extlibs/ZipLib/Source/ZipLib/ZipArchive.h"
+#include "ZipFile.h"
+#include "ZipArchive.h"
 
 using namespace std;
 

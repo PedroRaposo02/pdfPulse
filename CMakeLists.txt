@@ -1,10 +1,10 @@
-# Set the minimum required version of CMake
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.22)
 
 # Set the project name
-project(PDFPulse)
+project(pdf_pulse)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 
 # Include the subdirectories
 add_subdirectory(src)
+

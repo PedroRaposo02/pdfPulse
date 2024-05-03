@@ -6,8 +6,8 @@ DOCX_FILE ?= ${DATA_DIR}/teste_1.docx
 
 .PHONY: all clean run
 
-all: build
-	@cd build && cmake .. && cmake --build .
+all: clean build
+	@cd build && cmake -DCMAKE_VERBOSE_MAKEFILE=ON .. && cmake --build .
 
 build:
 	@mkdir -p build
@@ -20,4 +20,4 @@ run:
 	fi
 
 clean:
-	@rm -rf build
+	@rm -rf build out 

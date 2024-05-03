@@ -7,6 +7,7 @@ out/
 build/
 .vscode/
 data/*/
+.vs/
 
 # Ignore environment-specific files
 .env
