@@ -145,8 +145,5 @@ target_link_libraries(pdf_pulse_main
 
 target_include_directories(pdf_pulse_main
     PUBLIC
-        ${LIBHARU_INCLUDE_DIRS}
-        ${ZIPLIB_INCLUDE_DIRS}
-        extlibs/rapidxml
-        include
+        pdf_pulse
 )
