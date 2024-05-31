@@ -6,62 +6,80 @@
 
 using namespace std;
 
-int buildPdf(const string &outputPdfPath, const vector<string> &text)
-{
+const Debugger debugger;
 
-    HPDF_Doc pdf = HPDF_New(NULL, NULL);
-    if (!pdf)
-    {
-        cerr << "Error creating PDF document" << endl;
-        return 1;
-    }
 
-    if (HPDF_SetCompressionMode(pdf, HPDF_COMP_ALL) != HPDF_OK)
-    {
-        cerr << "Error setting compression mode" << endl;
-        HPDF_Free(pdf);
-        return 1;
+
+void createPDF(const PDFStructure &pdfStructure, const std::string &outputFile) {
+    HPDF_Doc pdf = HPDF_New(nullptr, nullptr);
+    if (!pdf) {
+        throw std::runtime_error("Error: unable to create PDF document.");
     }
 
     HPDF_Page page = HPDF_AddPage(pdf);
-    if (!page)
-    {
-        cerr << "Error adding page" << endl;
-        HPDF_Free(pdf);
-        return 1;
-    }
-
     HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
 
-    HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
-    if (!font)
-    {
-        cerr << "Error getting font" << endl;
-        HPDF_Free(pdf);
-        return 1;
-    }
-
+    HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", nullptr);
     HPDF_Page_SetFontAndSize(page, font, 12);
 
-    HPDF_Page_BeginText(page);
-    HPDF_Page_MoveTextPos(page, 50, 750);
+    // Add header
+    createHeader(pdf, page, pdfStructure.headers[0]);
 
-    for (const string &line : text)
-    {
-        HPDF_Page_ShowText(page, line.c_str());
-        HPDF_Page_MoveTextPos(page, 0, -20);
+    // Add footer
+    createFooter(pdf, page, pdfStructure.footers[0]);
+
+    // Add body content
+    float pageHeight = HPDF_Page_GetHeight(page);
+    float y = pageHeight - 100;  // Adjust starting y position
+    float x = 50;  // Adjust starting x position
+
+    for (const auto &paragraph : pdfStructure.content.body.paragraphs) {
+        for (const auto &run : paragraph.runs) {
+            if (!run.t.text.empty()) {
+                addTextToPage(page, run.t, x, y);  // Adjust x, y as needed
+                y -= 15;  // Adjust line spacing as needed
+            }
+        }
     }
 
-    HPDF_Page_EndText(page);
-
-    if (HPDF_SaveToFile(pdf, outputPdfPath.c_str()) != HPDF_OK)
-    {
-        cerr << "Error saving PDF to file" << endl;
-        HPDF_Free(pdf);
-        return 1;
-    }
-
+    // Save the PDF to a file
+    HPDF_SaveToFile(pdf, outputFile.c_str());
     HPDF_Free(pdf);
+}
 
-    return 0;
+void createHeader(HPDF_Doc pdf, HPDF_Page page, const Header &header) {
+    float pageHeight = HPDF_Page_GetHeight(page);
+    float marginTop = 30;  // Adjust margin as needed
+    float y = pageHeight - marginTop;
+    float x = 50;  // Adjust starting x position
+
+    for (const auto &paragraph : header.paragraphs) {
+        for (const auto &run : paragraph.runs) {
+            if (!run.t.text.empty()) {
+                addTextToPage(page, run.t, x, y);  // Adjust x, y as needed
+                y -= 15;  // Adjust line spacing as needed
+            }
+        }
+    }
+}
+
+void createFooter(HPDF_Doc pdf, HPDF_Page page, const Footer &footer) {
+    float marginBottom = 30;  // Adjust margin as needed
+    float y = marginBottom;
+    float x = 50;  // Adjust starting x position
+
+    for (const auto &paragraph : footer.paragraphs) {
+        for (const auto &run : paragraph.runs) {
+            if (!run.t.text.empty()) {
+                addTextToPage(page, run.t, x, y);  // Adjust x, y as needed
+                y -= 15;  // Adjust line spacing as needed
+            }
+        }
+    }
+}
+
+void addTextToPage(HPDF_Page page, const Text &text, float &cursorX, float &cursorY) {
+    HPDF_Page_BeginText(page);
+    HPDF_Page_TextOut(page, cursorX, cursorY, text.text.c_str());
+    HPDF_Page_EndText(page);
 }

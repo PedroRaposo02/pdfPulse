@@ -1,10 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include "xml_parser.hpp"
-#include "zip_extractor.hpp"
-#include "pdf_builder.hpp"
+#include "pdf_pulse.hpp"
 
 using namespace std;
 
@@ -17,7 +11,7 @@ int main(int argc, char *argv[])
         if (argc > 1 && argv[1] != NULL)
         {
             docx_file = argv[1];
-            if(argc > 2 && argv[2] != NULL)
+            if (argc > 2 && argv[2] != NULL)
             {
                 output_file = argv[2];
             }
@@ -28,12 +22,20 @@ int main(int argc, char *argv[])
         }
         else
         {
-            docx_file = "C:\\Users\\prapo\\Documents\\MerdasUni\\2023-2ndSemester\\PESTI\\pdfPulse\\data\\teste_1.docx";
+            docx_file = "C:\\Users\\prapo\\Documents\\MerdasUni\\2023-2ndSemester\\PESTI\\pdfPulse\\data\\gIc\\reports\\GERAL-dw198s6.docx";
         }
 
-        cout << "Filepath: " << docx_file << endl; // Print the filepath being used
+        cout << "Parsing file: " << docx_file << endl;
 
-        ZipArchive::Ptr zipFile = readZipFile(docx_file);
+        if (!isDocx(docx_file))
+        {
+            cerr << "Invalid file format" << endl;
+            return 1;
+        }
+
+        cout << "File format is valid" << endl;
+
+        ZipArchive::Ptr zipFile = openDocx(docx_file);
 
         if (!zipFile)
         {
@@ -41,48 +43,25 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        for (size_t i = 0; i < zipFile->GetEntriesCount(); i++)
-        {
-            ZipArchiveEntry::Ptr entry = zipFile->GetEntry(i);
-            cout << "Entry: " << entry->GetFullName() << endl;
-        }
+        cout << "Zip file read successfully" << endl;
 
-        // Grab and parse the document.xml file
-        ZipArchiveEntry::Ptr xmlFile = zipFile->GetEntry("word/document.xml");
+        cout << "Output Path is: " << output_file << endl;
 
-        if (!xmlFile)
+        if (!parseDocument(docx_file, output_file))
         {
-            cerr << "Error reading xml file" << endl;
+            cerr << "Error parsing document" << endl;
             return 1;
         }
 
-        cout << "XML File: " << xmlFile->GetFullName() << endl;
-
-        istream* xmlContentStr = xmlFile->GetDecompressionStream();
-
-        if (!xmlContentStr)
-        {
-            cerr << "Error reading xml content" << endl;
-            return 1;
-        }
-
-        cout << "XML Content Stream: " << xmlContentStr << endl;
-
-        string xmlContent = string(istreambuf_iterator<char>(*xmlContentStr), istreambuf_iterator<char>());
-
-        cout << "XML Content: " << xmlContent << endl;
-
-        string xmlText = parseXmlString(xmlContent);
-        
-        vector<string> vec;
-        vec.push_back(xmlText);
-
-        buildPdf(output_file, vec);
+        cout << "PDF created successfully in " << output_file << endl;
     }
-    catch (const std::exception &e)
+    catch (const exception &e)
     {
-        std::cerr << e.what() << '\n';
+        cerr << e.what() << '\n';
+        return 1;
     }
 
     return 0;
 }
+
+

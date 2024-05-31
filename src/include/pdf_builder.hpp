@@ -1,13 +1,15 @@
 #pragma once
 
-#ifndef PDF_BUILDER_HPP
-#define PDF_BUILDER_HPP
-
-#include <string>
-#include <vector>
-
 #include "hpdf.h"
 
-int buildPdf(const std::string& outputPdfPath, const std::vector<std::string>& text);
+#include "globals.hpp"
+#include "utils.hpp"
+#include <stdexcept>
 
-#endif // PDF_BUILDER_HPP
+using namespace std;
+
+void createPDF(const PDFStructure &pdfStructure, const std::string &filename);
+void createHeader(HPDF_Doc pdf, HPDF_Page page, const Header &header);
+void createFooter(HPDF_Doc pdf, HPDF_Page page, const Footer &footer);
+
+void addTextToPage(HPDF_Page page, const Text &text, float &cursorX, float &cursorY);

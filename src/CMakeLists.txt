@@ -47,6 +47,14 @@ FetchContent_Declare(libharu
   OVERRIDE_FIND_PACKAGE
 )
 
+# FETCHContent_Declare(libiconv
+#   GIT_REPOSITORY https://github.com/PedroRaposo02/libiconv.git
+#   GIT_TAG        master
+#   GIT_SHALLOW    TRUE
+#   GIT_PROGRESS   TRUE
+#   OVERRIDE_FIND_PACKAGE
+# )
+
 FetchContent_GetProperties(zlib)
 if(NOT zlib_POPULATED)
   FetchContent_Populate(zlib)
@@ -110,35 +118,77 @@ if(NOT libharu_POPULATED)
   add_subdirectory(${libharu_SOURCE_DIR} ${libharu_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
+# FetchContent_GetProperties(libiconv)
+# if(NOT libiconv_POPULATED)
+#   FetchContent_Populate(libiconv)
+#   set(LIBICONV_INCLUDE_DIRS 
+#     ${libiconv_BINARY_DIR}/include
+#     ${libiconv_BINARY_DIR}/source
+#   )
+#   set(LIBICONV_LIBRARY libiconv)
+#   add_subdirectory(${libiconv_SOURCE_DIR} ${libiconv_BINARY_DIR} EXCLUDE_FROM_ALL)
+# endif()
+
 set(sources_library
+    pdf_pulse.cpp
+    pdf_builder.cpp
     zip_extractor.cpp
     xml_parser.cpp
-    pdf_builder.cpp
+    utils.cpp
 )
 
-set(sources_executable
+set(headers_library
+    pdf_pulse.hpp
+    pdf_builder.hpp
+    zip_extractor.hpp
+    xml_parser.hpp
+    globals.hpp
+    printer.hpp
+    utils.hpp
+)
+
+set(SRCS_EXECUTABLE
     test/main.cpp
 )
 
-file(GLOB SRC_EXECUTABLE ${PROJECT_SOURCE_DIR}/test/*.cpp)
+set(RAPIDXML_HPP
+    extlibs/rapidxml/rapidxml.hpp
+    extlibs/rapidxml/rapidxml_print.hpp
+    extlibs/rapidxml/rapidxml_utils.hpp
+    extlibs/rapidxml/rapidxml_iterators.hpp
+)
 
-add_library(pdf_pulse STATIC ${sources_library})
+set(RAPIDXML_INCLUDE_DIRS
+    extlibs/rapidxml
+)
 
+add_subdirectory(extlibs/libiconv)
+set(LIBICONV_INCLUDE_DIRS 
+    ${libiconv_BINARY_DIR}/include
+    ${libiconv_BINARY_DIR}/source
+)
+
+set(LIBICONV_LIBRARY libiconv)
+
+add_library(pdf_pulse STATIC ${sources_library} ${RAPIDXML_HPP})
+
+target_include_directories(pdf_pulse
+    PUBLIC
+        include
+        ${LIBHARU_INCLUDE_DIRS}
+        ${ZIPLIB_INCLUDE_DIRS}
+        ${RAPIDXML_INCLUDE_DIRS}
+        # ${LIBICONV_INCLUDE_DIRS}
+)
 target_link_libraries(pdf_pulse
     PUBLIC
         ${HPDF_LIBRARY}
         ${ZIPLIB_LIBRARY}
+        # ${LIBICONV_LIBRARY}
 )
 
-target_include_directories(pdf_pulse
-    PUBLIC
-        ${LIBHARU_INCLUDE_DIRS}
-        ${ZIPLIB_INCLUDE_DIRS}
-        extlibs/rapidxml
-        include 
-)
 
-add_executable(pdf_pulse_main ${sources_executable} ${SRC_EXECUTABLE})
+add_executable(pdf_pulse_main ${SRCS_EXECUTABLE})
 
 target_link_libraries(pdf_pulse_main
     PUBLIC

@@ -7,4 +7,3 @@ set(CMAKE_CXX_STANDARD 14)
 
 # Include the subdirectories
 add_subdirectory(src)
-
